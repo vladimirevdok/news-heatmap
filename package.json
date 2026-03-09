@@ -1,16 +1,16 @@
 {
-  "name": "news-heatmap-server",
+  "name": "world-news-heatmap",
   "version": "1.0.0",
-  "description": "RSS caching server for World News Heatmap",
+  "description": "World News Heatmap — Live Globe",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.18.2",
     "node-fetch": "^2.7.0",
-    "fast-xml-parser": "^4.3.6"
+    "xml2js": "^0.6.2"
   },
   "engines": {
     "node": ">=18"

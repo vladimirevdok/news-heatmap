@@ -1,0 +1,151 @@
+
+<div id="loader"><div class="spin"></div><p id="loader-msg">Loading world map…</p></div>
+
+<header id="hdr">
+  <h1>World News Heatmap</h1>
+  <div id="hdr-right">
+    <div id="feed-pills"></div>
+    <span id="stat-articles">— articles</span>
+    <span id="stat-updated">—</span>
+    <div id="refresh-ring">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" id="refresh-arc"/></svg>
+    </div>
+    <div id="live-dot-wrap"><span class="ldot"></span>LIVE</div>
+  </div>
+</header>
+
+<!-- MARKETS BAR -->
+<div id="markets">
+  <span class="mkt-loading" id="mkt-loading">Loading markets…</span>
+  <span id="mkt-updated"></span>
+</div>
+
+<div id="map-wrap">
+  <div id="mapbox-map"></div>
+  <canvas id="heat-canvas"></canvas>
+  <svg id="overlay-svg"></svg>
+  <div id="tip" class="hidden"></div>
+  <div id="uk-poi-tip" class="uk-poi-tip" style="display:none"></div>
+  <div id="parl-tip"></div>
+  <div id="map-controls">
+    <div id="zoom-hint">
+      <div class="zoom-btn" id="zoom-in" title="Zoom in">+</div>
+      <div class="zoom-btn" id="zoom-out" title="Zoom out">−</div>
+      <div class="zoom-btn" id="zoom-reset" title="Reset zoom" style="font-size:11px">⌂</div>
+    </div>
+    <div id="legend"><span>Quiet</span><div id="legend-bar"></div><span>Hot</span></div>
+  </div>
+
+  <!-- DOOMSDAY CLOCK -->
+  <div id="doom">
+    <svg id="doom-face" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="dg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1a0505"/>
+          <stop offset="100%" stop-color="#060102"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Clock face -->
+      <circle cx="48" cy="48" r="46" fill="url(#dg)" stroke="#3a0808" stroke-width="1.5"/>
+      <!-- Tick marks -->
+      <g id="doom-ticks" stroke="#3a1010" stroke-width="1"></g>
+      <!-- Minute markers (bold) -->
+      <g id="doom-mins" stroke="#5a1515" stroke-width="2"></g>
+      <!-- Midnight zone highlight: 11:58–12:00 arc glows red -->
+      <path id="doom-arc" fill="none" stroke="#cc2200" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+      <!-- Hour hand -->
+      <line id="doom-hour" x1="48" y1="48" x2="48" y2="22" stroke="#cc3311" stroke-width="3" stroke-linecap="round" filter="url(#glow)"/>
+      <!-- Minute hand -->
+      <line id="doom-minute" x1="48" y1="48" x2="48" y2="14" stroke="#ff4422" stroke-width="2" stroke-linecap="round" filter="url(#glow)"/>
+      <!-- Second hand -->
+      <line id="doom-second" x1="48" y1="52" x2="48" y2="12" stroke="#ff6644" stroke-width="1" stroke-linecap="round" opacity="0.8"/>
+      <!-- Center cap -->
+      <circle cx="48" cy="48" r="3" fill="#cc3311"/>
+      <!-- 12 marker -->
+      <rect x="46.5" y="5" width="3" height="8" rx="1.5" fill="#882211"/>
+    </svg>
+    <div id="doom-label">Doomsday Clock</div>
+    <div id="doom-time">89s to midnight</div>
+    <div id="doom-sub">Set Jan 2025<br>Bulletin of Atomic Scientists</div>
+  </div>
+
+  <!-- Alliance highlight buttons -->
+  <div id="alliance-btns">
+    <div class="alliance-btn nato" id="btn-nato" onclick="toggleAlliance('nato')">NATO</div>
+    <div class="alliance-btn brics" id="btn-brics" onclick="toggleAlliance('brics')">BRICS</div>
+    <div class="alliance-btn sco" id="btn-sco" onclick="toggleAlliance('sco')">SCO</div>
+    <div class="alliance-btn g7" id="btn-g7" onclick="toggleAlliance('g7')">G7</div>
+  </div>
+
+  <!-- Conflicts button + dropdown -->
+  <div id="conflicts-wrap">
+    <div id="conflicts-btn" onclick="toggleConflictsDropdown()">
+      <span class="cbulse"></span>CONFLICTS
+    </div>
+    <div id="conflicts-dropdown"></div>
+  </div>
+
+  <!-- Conflict detail panel -->
+  <div id="conflict-panel">
+    <div id="cp-hdr">
+      <div id="cp-title">—</div>
+      <button id="cp-close" onclick="closeConflictPanel()">×</button>
+    </div>
+    <div id="cp-meta"></div>
+    <div id="cp-countries"></div>
+    <div id="cp-body">
+      <div id="cp-history">
+        <div id="cp-history-title">Perspectives</div>
+        <div id="cp-history-text"></div>
+      </div>
+      <div id="cp-live">
+        <div id="cp-live-title">Live Coverage</div>
+        <div id="cp-live-articles"></div>
+      </div>
+    </div>
+    <div id="cp-footer">Auto-updated from live feeds each cycle</div>
+  </div>
+
+  <!-- Issues button -->
+  <div id="issues-btn" onclick="toggleIssues()">ISSUES</div>
+
+  <!-- Flights toggle -->
+  <div id="flights-btn" onclick="toggleFlights()" title="Toggle live flight radar (OpenSky Network)">
+    <span>✈</span>FLIGHTS
+  </div>
+  <div id="flight-tip"></div>
+
+  <!-- Earthquake toggle -->
+  <div id="quake-btn" onclick="toggleQuakes()" title="Toggle earthquake overlay (M4.5+, last 24h)">
+    <span id="quake-dot" style="width:7px;height:7px;border-radius:50%;background:#44aaff;display:inline-block;flex-shrink:0"></span>QUAKES
+  </div>
+  <div id="quake-tip"></div>
+
+  <!-- Issues panel (slides in from left) -->
+  <div id="issues-panel">
+    <div id="issues-hdr">
+      <span id="issues-title">Global Issues</span>
+      <button id="issues-close" onclick="toggleIssues()">×</button>
+    </div>
+    <div id="issues-body"><div style="padding:16px;font-size:11px;color:#2d4560;font-style:italic">Loading…</div></div>
+  </div>
+
+  <!-- Side panel -->
+  <div id="panel">
+    <div id="panel-hdr">
+      <div><div id="panel-country"></div><div id="panel-count"></div></div>
+      <button id="panel-close">×</button>
+    </div>
+    <div id="panel-body"></div>
+  </div>
+</div>
+
+<div id="ticker">
+  <span class="tlabel">LIVE</span>
+  <div id="t-track"><div id="t-inner"></div></div>
+</div>
+
